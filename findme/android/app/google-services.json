@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "662948497355",
+    "project_id": "testfindme-f3608",
+    "storage_bucket": "testfindme-f3608.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662948497355:android:0e36c43408180d59c9584e",
+        "android_client_info": {
+          "package_name": "com.example.findme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "662948497355-9evagesqnbo073u4cv12oll6tugpb023.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTnwm0R-XdOpEJW6JSmQuPLq1VX5o--ys"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "662948497355-9evagesqnbo073u4cv12oll6tugpb023.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
