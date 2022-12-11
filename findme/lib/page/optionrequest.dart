@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:findme/service/request_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -18,8 +19,8 @@ class OptionRequest extends StatefulWidget {
 }
 
 class _OptionRequestState extends State<OptionRequest> {
+/*
   Future sendRequest(String reciverUid, List docIds) async {
-
     String? currentUId = FirebaseAuth.instance.currentUser?.uid;
     FirebaseFirestore firepath = FirebaseFirestore.instance;
     //insert sent request in myuserid
@@ -34,7 +35,6 @@ class _OptionRequestState extends State<OptionRequest> {
   }
 
   Future deleteRequest(String reciverUid, List docIds) async {
-
     String? currentUId = FirebaseAuth.instance.currentUser?.uid;
     FirebaseFirestore firepath = FirebaseFirestore.instance;
     //delete request
@@ -68,7 +68,7 @@ class _OptionRequestState extends State<OptionRequest> {
       }
      });
     return flag;
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -81,18 +81,18 @@ class _OptionRequestState extends State<OptionRequest> {
           Text(widget.email),
           const SizedBox(width: 100),
           Text(widget.uid),
-          isJustSent(widget.docIds,widget.uid)?
+          RequestService().isJustSent(widget.docIds,widget.uid)?
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(178, 208, 206, 1)),
             onPressed: (){
-            deleteRequest(widget.uid,widget.docIds);
+            RequestService().deleteRequest(widget.uid,FirebaseAuth.instance.currentUser!.uid,widget.docIds);
             QuickAlert.show(context: context,
             confirmBtnColor: const Color.fromRGBO(53, 112, 166, 1), 
             type: QuickAlertType.success,
             text: 'Friend request successfully canceled to'+' '+widget.username);
             }, child: Text('Cancel Request'))
           :ElevatedButton(onPressed: (){
-            sendRequest(widget.uid,widget.docIds);
+            RequestService().sendRequest(widget.uid,FirebaseAuth.instance.currentUser!.uid,widget.docIds);
             QuickAlert.show(context: context,
             confirmBtnColor: const Color.fromRGBO(53, 112, 166, 1), 
             type: QuickAlertType.success,
