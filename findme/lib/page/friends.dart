@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:findme/color/color.dart';
+import 'package:findme/service/request_service.dart';
 import 'package:findme/service/user.dart';
 import 'package:findme/page/f_request.dart';
 import 'package:findme/page/optionrequest.dart';
@@ -20,7 +21,9 @@ class Friends extends StatefulWidget {
 }
 
 class _FriendsState extends State<Friends> {
-  List<String> docIds = [];
+  List<String> docRequestsId = [];
+  List<String> docRequestsSentId = [];
+
   bool isLoading = false;
   Map<String, dynamic> userMap = {};
 
@@ -30,8 +33,9 @@ class _FriendsState extends State<Friends> {
   @override
   void initState() {
     getDocId();
+    getDocIdRequestSent();
     super.initState();
-    docIds;
+    docRequestsId;
   }
 
   void onSearch() async {
@@ -67,12 +71,24 @@ class _FriendsState extends State<Friends> {
         .collection('receivedrequests')
         .get()
         .then((snapshot) => snapshot.docs.forEach((document) {
-              docIds.add(document.reference.id);
+              docRequestsId.add(document.reference.id);
               debugPrint(document.reference.toString());
             }));
   }
 
-  void removeFriend(String friendsId, int index) async {
+  Future getDocIdRequestSent() async {
+    await _firePath
+        .collection('friendsrequests')
+        .doc(widget.myuser.id)
+        .collection('sentrequests')
+        .get()
+        .then((snapshot) => snapshot.docs.forEach((document) {
+              docRequestsSentId.add(document.reference.id);
+              debugPrint(document.reference.toString());
+            }));
+  }
+
+  void removeFriend(String friendsId) async {
     _firePath
         .collection('friends')
         .doc(widget.myuser.id)
@@ -86,11 +102,11 @@ class _FriendsState extends State<Friends> {
         .doc(widget.myuser.id)
         .delete();
     setState(() {
-      widget.myuser.friends!.removeAt(index);
+      widget.myuser.friends!.remove(friendsId);
     });
   }
 
-  dialog(Widget namemail, int index) async {
+  dialog(Widget namemail, friendsId) async {
     showDialog(
         context: context,
         builder: ((context) {
@@ -100,7 +116,7 @@ class _FriendsState extends State<Friends> {
             actions: [
               ElevatedButton(
                   onPressed: () {
-                    removeFriend(widget.myuser.friends![index].trim(), index);
+                    removeFriend(friendsId);
                     Navigator.pop(context);
                     QuickAlert.show(
                         context: context,
@@ -112,6 +128,80 @@ class _FriendsState extends State<Friends> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.container.background)),
             ],
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          );
+        }));
+  }
+
+  Widget textType(usermap) {
+    if (RequestService()
+        .isJustfrineds(widget.myuser.friends!, usermap['uid'])) {
+      return const Text('do you really want to remove this friend?');
+    } else if (RequestService().isJustSent(docRequestsSentId, usermap['uid'])) {
+      return const Text('do you want to delete the request?');
+    }
+    return const Text('do you want send the request?');
+  }
+
+  Widget buttonDialog(usermap) {
+    if (RequestService()
+        .isJustfrineds(widget.myuser.friends!, usermap['uid'])) {
+      return ElevatedButton(
+          onPressed: () {
+            removeFriend(usermap['uid']);
+            Navigator.pop(context);
+            QuickAlert.show(
+                context: context,
+                confirmBtnColor: AppColors.container.background,
+                type: QuickAlertType.success,
+                text: 'Friend Removed');
+          },
+          child: const Text("Remove"),
+          style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.container.background));
+    } else if (RequestService().isJustSent(docRequestsSentId, usermap['uid'])) {
+      return ElevatedButton(
+          onPressed: () {
+            RequestService().deleteRequest(
+                usermap['uid'], widget.myuser.id!, docRequestsId);
+            Navigator.pop(context);
+            QuickAlert.show(
+                context: context,
+                confirmBtnColor: AppColors.container.background,
+                type: QuickAlertType.success,
+                text: 'Request Deleted');
+            getDocIdRequestSent();
+          },
+          style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.container.background),
+          child: const Text("Delete"));
+    }
+    return ElevatedButton(
+        onPressed: () {
+          RequestService()
+              .sendRequest(usermap['uid'], widget.myuser.id!, docRequestsId);
+          Navigator.pop(context);
+          QuickAlert.show(
+              context: context,
+              confirmBtnColor: AppColors.container.background,
+              type: QuickAlertType.success,
+              text: 'Request sent');
+          getDocIdRequestSent();
+        },
+        style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.container.background),
+        child: const Text("Send"));
+  }
+
+  dialogRequest(userMap) async {
+    showDialog(
+        context: context,
+        builder: ((context) {
+          return AlertDialog(
+            title: Text(userMap['username']),
+            content: textType(userMap),
+            actions: [buttonDialog(userMap)],
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           );
@@ -149,7 +239,8 @@ class _FriendsState extends State<Friends> {
                         Navigator.push(
                             context,
                             PageTransition(
-                                child: FriendRequestReceived2(myuser: widget.myuser),
+                                child: FriendRequestReceived2(
+                                    myuser: widget.myuser),
                                 type: PageTransitionType.rightToLeft));
                       },
                       icon: const Icon(Icons.notifications),
@@ -208,16 +299,17 @@ class _FriendsState extends State<Friends> {
           userMap.isEmpty != true
               ? ListTile(
                   onTap: () {
-                    Navigator.push(
+                    dialogRequest(userMap);
+                    /* Navigator.push(
                         context,
                         PageTransition(
                             child: OptionRequest(
                               username: userMap['username'],
                               email: userMap['email'],
                               uid: userMap['uid'],
-                              docIds: docIds,
+                              docRequestsId: docRequestsId,
                             ),
-                            type: PageTransitionType.rightToLeft));
+                            type: PageTransitionType.rightToLeft));*/
                   },
                   title: Text(userMap['username']),
                   subtitle: Text(userMap['email']),
@@ -276,16 +368,17 @@ class _FriendsState extends State<Friends> {
                                 ],
                               ),
                               onTap: () {
-                                dialog(GetUserName( documentId: widget.myuser.friends![index].trim()),index);
+                                dialog(
+                                    GetUserName(
+                                        documentId: widget
+                                            .myuser.friends![index]
+                                            .trim()),
+                                    widget.myuser.friends![index]);
                               },
                             ),
                           ),
                         );
-                      }
-                 )
-              )
-           )
-          )
+                      }))))
         ],
       ),
     );

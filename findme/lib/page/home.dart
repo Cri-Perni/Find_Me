@@ -188,7 +188,7 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                  FirebaseAuth.instance.currentUser!.displayName
+                                  widget.myuser.username
                                       .toString(),
                                   style: TextStyle(fontSize: 24))
                             ],
@@ -199,9 +199,7 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                  FirebaseAuth.instance.currentUser!.email
-                                      .toString(),
+                              Text(widget.myuser.email.toString(),
                                   style: TextStyle(fontSize: 16))
                             ],
                           )
