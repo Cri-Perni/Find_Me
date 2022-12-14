@@ -171,6 +171,9 @@ class _FriendsState extends State<Friends> {
                 confirmBtnColor: AppColors.container.background,
                 type: QuickAlertType.success,
                 text: 'Request Deleted');
+            setState(() {
+              docRequestsSentId = [];
+            });
             getDocIdRequestSent();
           },
           style: ElevatedButton.styleFrom(
@@ -187,6 +190,9 @@ class _FriendsState extends State<Friends> {
               confirmBtnColor: AppColors.container.background,
               type: QuickAlertType.success,
               text: 'Request sent');
+              setState(() {
+              docRequestsSentId = [];
+            });
           getDocIdRequestSent();
         },
         style: ElevatedButton.styleFrom(
@@ -300,16 +306,6 @@ class _FriendsState extends State<Friends> {
               ? ListTile(
                   onTap: () {
                     dialogRequest(userMap);
-                    /* Navigator.push(
-                        context,
-                        PageTransition(
-                            child: OptionRequest(
-                              username: userMap['username'],
-                              email: userMap['email'],
-                              uid: userMap['uid'],
-                              docRequestsId: docRequestsId,
-                            ),
-                            type: PageTransitionType.rightToLeft));*/
                   },
                   title: Text(userMap['username']),
                   subtitle: Text(userMap['email']),
@@ -378,7 +374,11 @@ class _FriendsState extends State<Friends> {
                             ),
                           ),
                         );
-                      }))))
+                      }
+                      )
+             )
+            )
+          )
         ],
       ),
     );

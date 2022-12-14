@@ -26,8 +26,6 @@ class GetUserName extends StatelessWidget {
           Column(
           children: [
           Container(height: 10, width: size.width*.15,color: Colors.grey[400] ),
-          SizedBox(height: 10,),
-          Container(height: 10, width: size.width,color: Colors.grey[400],)
         ],);
       }),
       );

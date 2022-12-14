@@ -236,8 +236,7 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
                             ),
                             Switch(
                                 value: isOn,
-                                activeColor:
-                                    const Color.fromRGBO(178, 208, 206, 1),
+                                activeColor:AppColors.container.background,
                                 onChanged: (bool value) {
                                   if (value) {
                                     _listenLocation();
