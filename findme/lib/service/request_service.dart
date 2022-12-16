@@ -4,10 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class RequestService {
+
+  FirebaseFirestore firePath = FirebaseFirestore.instance;
+
   Future<List<String>> getFriends() async {
-    FirebaseFirestore firepath = FirebaseFirestore.instance;
     List<String> docFriendsID = [];
-    firepath
+    firePath
         .collection('friends')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('myfriends')
@@ -22,8 +24,12 @@ class RequestService {
     return docFriendsID;
   }
 
+  fireGetFriendsSnap(String uid) {
+    return FirebaseFirestore.instance.collection('friends').doc(uid).snapshots();
+  }
+
   fireGetFriends(String uid) {
-    return FirebaseFirestore.instance.collection('friends').doc(uid).get();
+    return FirebaseFirestore.instance.collection('friends').doc(uid);
   }
 
   Future sendRequest(String reciverUid, String currentUId, List docIds) async {
@@ -91,5 +97,20 @@ class RequestService {
 
   bool isMe(String myId, String searchId) {
     return (myId == searchId);
+  }
+
+  void removeFriend(String friendsId,String currentId) async {
+    firePath
+        .collection('friends')
+        .doc(currentId)
+        .collection('myfriends')
+        .doc(friendsId)
+        .delete();
+    firePath
+        .collection('friends')
+        .doc(friendsId)
+        .collection('myfriends')
+        .doc(currentId)
+        .delete();
   }
 }

@@ -305,6 +305,7 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
                   ),
                   //TextButton(onPressed:_LogOut , child: Text('Logout')),
                   Card(
+                    
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
                     elevation: 4,

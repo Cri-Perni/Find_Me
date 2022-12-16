@@ -1,6 +1,8 @@
 import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:findme/color/color.dart';
+import 'package:findme/page/friends_list.dart';
+import 'package:findme/page/pending_request.dart';
 import 'package:findme/service/request_service.dart';
 import 'package:findme/service/user.dart';
 import 'package:findme/page/f_request.dart';
@@ -23,7 +25,6 @@ class Friends extends StatefulWidget {
 class _FriendsState extends State<Friends> {
   List<String> docRequestsId = [];
   List<String> docRequestsSentId = [];
-
   bool isLoading = false;
   Map<String, dynamic> userMap = {};
 
@@ -32,6 +33,7 @@ class _FriendsState extends State<Friends> {
 
   @override
   void initState() {
+    docRequestsSentId = [];
     getDocId();
     getDocIdRequestSent();
     super.initState();
@@ -71,7 +73,10 @@ class _FriendsState extends State<Friends> {
         .collection('receivedrequests')
         .get()
         .then((snapshot) => snapshot.docs.forEach((document) {
-              docRequestsId.add(document.reference.id);
+              setState(() {
+                docRequestsId.add(document.reference.id);
+              });
+
               debugPrint(document.reference.toString());
             }));
   }
@@ -83,7 +88,9 @@ class _FriendsState extends State<Friends> {
         .collection('sentrequests')
         .get()
         .then((snapshot) => snapshot.docs.forEach((document) {
-              docRequestsSentId.add(document.reference.id);
+              setState(() {
+                docRequestsSentId.add(document.reference.id);
+              });
               debugPrint(document.reference.toString());
             }));
   }
@@ -135,16 +142,20 @@ class _FriendsState extends State<Friends> {
   }
 
   Widget textType(usermap) {
+    getDocIdRequestSent();
     if (RequestService()
         .isJustfrineds(widget.myuser.friends!, usermap['uid'])) {
       return const Text('do you really want to remove this friend?');
     } else if (RequestService().isJustSent(docRequestsSentId, usermap['uid'])) {
       return const Text('do you want to delete the request?');
+    } else if (RequestService().isMe(widget.myuser.id!, usermap['uid'])) {
+      return const Text('This is your profile');
     }
     return const Text('do you want send the request?');
   }
 
   Widget buttonDialog(usermap) {
+    getDocIdRequestSent();
     if (RequestService()
         .isJustfrineds(widget.myuser.friends!, usermap['uid'])) {
       return ElevatedButton(
@@ -156,10 +167,13 @@ class _FriendsState extends State<Friends> {
                 confirmBtnColor: AppColors.container.background,
                 type: QuickAlertType.success,
                 text: 'Friend Removed');
+            setState(() {
+              userMap = {};
+            });
           },
-          child: const Text("Remove"),
           style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.container.background));
+              backgroundColor: AppColors.container.background),
+          child: const Text("Remove"));
     } else if (RequestService().isJustSent(docRequestsSentId, usermap['uid'])) {
       return ElevatedButton(
           onPressed: () {
@@ -173,12 +187,15 @@ class _FriendsState extends State<Friends> {
                 text: 'Request Deleted');
             setState(() {
               docRequestsSentId = [];
+              userMap = {};
             });
             getDocIdRequestSent();
           },
           style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.container.background),
           child: const Text("Delete"));
+    } else if (RequestService().isMe(widget.myuser.id!, usermap['uid'])) {
+      return const SizedBox();
     }
     return ElevatedButton(
         onPressed: () {
@@ -190,9 +207,10 @@ class _FriendsState extends State<Friends> {
               confirmBtnColor: AppColors.container.background,
               type: QuickAlertType.success,
               text: 'Request sent');
-              setState(() {
-              docRequestsSentId = [];
-            });
+          setState(() {
+            docRequestsSentId = [];
+            userMap = {};
+          });
           getDocIdRequestSent();
         },
         style: ElevatedButton.styleFrom(
@@ -214,33 +232,103 @@ class _FriendsState extends State<Friends> {
         }));
   }
 
+  Widget textField(TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+          hintText: 'Search',
+          prefixIcon: const Icon(Icons.search),
+          prefixIconColor: AppColors.container.background,
+          fillColor: const Color.fromRGBO(209, 228, 255, 1),
+          filled: true,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: BorderSide(color: AppColors.container.background))),
+    );
+  }
+
+  Widget cardFriends(Size size, String title, AssetImage image) {
+    return Card(
+        elevation: 10,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          // ignore: sized_box_for_whitespace
+          child: Container(
+            height: size.height * .20,
+            width: size.width * .35,
+            child: Column(children: [
+              Container(
+                  height: size.height * .05,
+                  width: size.width * .40,
+                  decoration: BoxDecoration(
+                    color: AppColors.container.background,
+                  ),
+                  child: Center(
+                      child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ))),
+              Container(
+                  height: size.height * .15,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                    image: image,
+                    fit: BoxFit.fitHeight,
+                  )))
+            ]),
+          ),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Friends'),
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        backgroundColor: Colors.white12,
-        titleTextStyle: TextStyle(
-            color: AppColors.text.textColor,
-            fontSize: 30,
-            fontWeight: FontWeight.bold),
-        actions: [
-          StreamBuilder(
-              stream: _firePath
-                  .collection('friendsrequests')
-                  .doc(widget.myuser.id)
-                  .collection('receivedrequests')
-                  .snapshots(),
-              builder: ((context, snapshot) {
-                if (snapshot.data!.docs.isNotEmpty) {
-                  return Badge(
-                    position: BadgePosition.topEnd(top: 12, end: 12),
-                    badgeColor: AppColors.container.notify,
-                    child: IconButton(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Friends'),
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          backgroundColor: Colors.white12,
+          titleTextStyle: TextStyle(
+              color: AppColors.text.textColor,
+              fontSize: 30,
+              fontWeight: FontWeight.bold),
+          actions: [
+            StreamBuilder(
+                stream: _firePath
+                    .collection('friendsrequests')
+                    .doc(widget.myuser.id)
+                    .collection('receivedrequests')
+                    .snapshots(),
+                builder: ((context, snapshot) {
+                  if (snapshot.data!.docs.isNotEmpty) {
+                    return Badge(
+                      position: BadgePosition.topEnd(top: 12, end: 12),
+                      badgeColor: AppColors.container.notify,
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              PageTransition(
+                                  child: FriendRequestReceived2(
+                                      myuser: widget.myuser),
+                                  type: PageTransitionType.rightToLeft));
+                        },
+                        icon: const Icon(Icons.notifications),
+                        color: AppColors.container.background,
+                        iconSize: 28,
+                      ),
+                    );
+                  } else {
+                    return IconButton(
+                      icon: const Icon(Icons.notifications),
+                      color: AppColors.container.background,
+                      iconSize: 28,
                       onPressed: () {
                         Navigator.push(
                             context,
@@ -249,138 +337,149 @@ class _FriendsState extends State<Friends> {
                                     myuser: widget.myuser),
                                 type: PageTransitionType.rightToLeft));
                       },
-                      icon: const Icon(Icons.notifications),
-                      color: AppColors.container.background,
-                      iconSize: 28,
-                    ),
-                  );
-                } else {
-                  return IconButton(
-                    icon: const Icon(Icons.notifications),
-                    color: AppColors.container.background,
-                    iconSize: 28,
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          PageTransition(
-                              child:
-                                  FriendRequestReceived2(myuser: widget.myuser),
-                              type: PageTransitionType.rightToLeft));
-                    },
-                  );
-                }
-              })),
-        ],
-      ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: size.height / 20,
-          ),
-          Container(
-            height: size.height / 14,
-            width: size.width,
-            alignment: Alignment.center,
-            child: Container(
+                    );
+                  }
+                })),
+          ],
+        ),
+        body: SingleChildScrollView(
+            child: Column(
+          children: [
+            SizedBox(
+              height: size.height * .02,
+            ),
+            Container(
               height: size.height / 14,
-              width: size.width / 1.15,
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                    hintText: "Search",
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10))),
+              width: size.width,
+              alignment: Alignment.center,
+              child: Container(
+                height: size.height / 14,
+                width: size.width / 1.15,
+                child: textField(_searchController),
               ),
             ),
-          ),
-          SizedBox(
-            height: size.height * .02,
-          ),
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.container.background),
-              onPressed: onSearch,
-              child: const Text('Search')),
-          // SizedBox(height: size.height/30,),
-          userMap.isEmpty != true
-              ? ListTile(
-                  onTap: () {
-                    dialogRequest(userMap);
-                  },
-                  title: Text(userMap['username']),
-                  subtitle: Text(userMap['email']),
-                )
-              : Container(
-                  height: size.height * .12,
-                ),
-          SizedBox(
-            height: 2,
-            width: size.width - 6,
-            child: Container(
-              color: AppColors.container.backgroundark,
+            SizedBox(
+              height: size.height * .015,
             ),
-          ),
-          Padding(
-              padding: const EdgeInsets.all(5),
-              child: Text(
-                'Friends List',
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.container.background),
-              )),
-          Expanded(
-              child: Card(
-                  color: AppColors.container.background,
-                  child: ListView.builder(
-                      itemCount: widget.myuser.friends!.length,
-                      itemBuilder: ((context, index) {
-                        return Card(
-                          color: Colors.white,
-                          // ignore: prefer_const_constructors
-                          child: Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: ListTile(
-                              leading: CircleAvatar(
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25)),
+                    backgroundColor: AppColors.container.background),
+                onPressed: () {
+                  setState(() {
+                    docRequestsSentId = [];
+                  });
+                  onSearch();
+                  getDocIdRequestSent();
+                },
+                child: Padding(
+                    padding: EdgeInsets.all(size.width * .02),
+                    child: const Text('Search'))),
+            SizedBox(
+              height: size.height * .01,
+            ),
+            userMap.isEmpty != true
+                ? Stack(children: [
+                    Container(
+                        padding: EdgeInsets.only(
+                            top: size.height * 0.13,
+                            bottom: size.height * 0.08),
+                        height: size.height * .35,
+                        decoration: const BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage("assets/Search.png"),
+                                fit: BoxFit.fitHeight))),
+                    Container(
+                        height: size.height * .35,
+                        color: Color.fromARGB(73, 255, 255, 255),
+                        child: Column(children: [
+                          Card(
+                            elevation: 10,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            color: Colors.white,
+                            // ignore: prefer_const_constructors
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: ListTile(
+                                leading: CircleAvatar(
                                   backgroundImage:
-                                      const AssetImage("assets/utente.jfif"),
+                                      AssetImage("assets/utente.jfif"),
                                   backgroundColor:
                                       AppColors.container.background,
-                                  radius: 25),
-                              title: GetUserName(
-                                  documentId:
-                                      widget.myuser.friends![index].trim()),
-                              tileColor: Colors.white,
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                // ignore: prefer_const_literals_to_create_immutables
-                                children: [
-                                  const Text(
-                                    'Click For Manage',
-                                    style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 114, 114, 114)),
-                                  )
-                                ],
+                                  radius: 25,
+                                ),
+                                title: Text(userMap['username']),
+                                tileColor: Colors.white,
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  // ignore: prefer_const_literals_to_create_immutables
+                                  children: [
+                                    const Text(
+                                      'Click For Manage',
+                                      style: TextStyle(
+                                          color: Color.fromARGB(
+                                              255, 114, 114, 114)),
+                                    )
+                                  ],
+                                ),
+                                onTap: () {
+                                  docRequestsSentId;
+                                  dialogRequest(userMap);
+                                },
                               ),
-                              onTap: () {
-                                dialog(
-                                    GetUserName(
-                                        documentId: widget
-                                            .myuser.friends![index]
-                                            .trim()),
-                                    widget.myuser.friends![index]);
-                              },
                             ),
-                          ),
-                        );
-                      }
-                      )
-             )
-            )
-          )
-        ],
-      ),
-    );
+                          )
+                        ]))
+                  ])
+                : Container(
+                    padding: EdgeInsets.only(
+                        top: size.height * 0.13, bottom: size.height * 0.08),
+                    height: size.height * .35,
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/Search.png"),
+                            fit: BoxFit.fitHeight))),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
+                height: size.height * .006,
+                width: size.width * .98,
+                child: Container(
+                  color: AppColors.container.background,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: size.height * .035,
+            ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              GestureDetector(
+                child: cardFriends(
+                    size, 'Frineds', const AssetImage("assets/Friend.png")),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      PageTransition(
+                          child: FriendsList(myuser: widget.myuser),
+                          type: PageTransitionType.rightToLeft));
+                },
+              ),
+              GestureDetector(
+                child: cardFriends(
+                    size, 'Pending', const AssetImage("assets/Recived.png")),
+                onTap: () {
+                  // ignore: avoid_print
+                  Navigator.push(
+                      context,
+                      PageTransition(
+                          child: Pending(myuser: widget.myuser),
+                          type: PageTransitionType.rightToLeft));
+                },
+              )
+            ])
+          ],
+        )));
   }
 }

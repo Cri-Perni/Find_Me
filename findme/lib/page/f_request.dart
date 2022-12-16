@@ -188,6 +188,7 @@ class _FriendRequestReceivedState2 extends State<FriendRequestReceived2> {
                   itemBuilder: ((context, index) {
                     // ignore: prefer_const_constructors
                     return Card(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       color: Colors.white,
                       // ignore: prefer_const_constructors
                       child: Padding(

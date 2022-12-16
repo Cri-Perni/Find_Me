@@ -13,7 +13,6 @@ class _Container {
   Color notify = const Color.fromRGBO(216, 49, 91, 1);
 }
 
-
 class _Scaffold {
   Color background = const Color.fromARGB(255, 250, 251, 255);
 }

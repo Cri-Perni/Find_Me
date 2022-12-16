@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-class GetUserName extends StatelessWidget {
-  GetUserName({super.key, required this.documentId});
+class GetUserImage extends StatelessWidget {
+  GetUserImage({super.key, required this.documentId});
 
   String documentId;
 
