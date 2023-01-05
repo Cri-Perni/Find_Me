@@ -1,7 +1,9 @@
 import 'dart:math';
 import 'package:findme/page/home.dart';
-import 'package:findme/page/login.dart';
+import 'package:findme/page/Auth/login.dart';
 import 'package:findme/page/selector_page.dart';
+import 'package:findme/page/tree.dart';
+import 'package:findme/page/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:findme/service/auth.dart';
@@ -11,7 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:quickalert/quickalert.dart';
 
-import '../color/color.dart';
+import '../../color/color.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -28,6 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerUserName = TextEditingController();
+  final TextEditingController _controllerName = TextEditingController();
   
 
   Future<void> createUserWithEmailAndPassword() async{
@@ -42,11 +45,12 @@ class _RegisterPageState extends State<RegisterPage> {
         await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser?.uid).set({
           'email': _controllerEmail.text.trim(),
           'username': _controllerUserName.text.trim(),
+          'name': _controllerName.text.trim(),
           'uid': FirebaseAuth.instance.currentUser!.uid 
         },SetOptions(merge: true)
         );
         // ignore: prefer_const_constructors, use_build_context_synchronously
-        Navigator.pushReplacement(context, PageTransition(child: SelectorPage(), type: PageTransitionType.rightToLeft));
+        Navigator.pushReplacement(context, PageTransition(child: Tree(), type: PageTransitionType.rightToLeft));
     } on FirebaseAuthException catch(e) {
       setState(() {
         errorMessage = e.message;
@@ -142,7 +146,7 @@ Widget InputField(
         backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacement(context, PageTransition(child: Tree(), type: PageTransitionType.leftToRight));
           },
           icon: const Icon(Icons.arrow_back_ios),
           iconSize: 20,
@@ -182,8 +186,7 @@ Widget InputField(
                 child: Column(
                   children: [
                     InputField("Username",_controllerUserName,Icons.person_outlined),
-                    InputField("Name", _controllerCheckPassword, Icons.lock_outlined),
-                    InputField("LastName", _controllerCheckPassword, Icons.lock_outlined),
+                    InputField("Name & LastName", _controllerName, Icons.lock_outlined),
                     InputField("Email",_controllerEmail,Icons.mail_lock_outlined),
                     InputField("Password",_controllerPassword,Icons.lock_outlined,obscureText: true),
                     InputField("Confirm Password",_controllerCheckPassword,Icons.lock_outlined,obscureText: true),
@@ -203,11 +206,14 @@ Widget InputField(
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
                     const Text("Do you have an account?"),
-                    const Text("Sign in",style: TextStyle(
+                    TextButton(onPressed:() {
+                      Navigator.pushReplacement(context, PageTransition(child: const LoginPage(), type: PageTransitionType.leftToRight));
+                    } , 
+                    child:const Text("Sign in",style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
-                    ),
-                    ),
+                    ),)
+                    )
                   ],
                 ),
                 Container(

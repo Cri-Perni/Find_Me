@@ -7,9 +7,9 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
 
-import '../color/color.dart';
-import '../notused/get_user_image.dart';
-import '../service/get_user_name.dart';
+import '../../color/color.dart';
+import '../../notused/get_user_image.dart';
+import '../../service/get_user_name.dart';
 
 class Pending extends StatefulWidget {
   Pending({super.key, required this.myuser});

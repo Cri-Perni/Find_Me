@@ -1,12 +1,10 @@
+import 'package:findme/service/get_user_name.dart';
 import 'package:findme/service/request_service.dart';
 import 'package:findme/service/user.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:quickalert/quickalert.dart';
 
-import '../color/color.dart';
-import '../service/get_user_name.dart';
+import 'package:quickalert/quickalert.dart';
+import '../../color/color.dart';
 
 class FriendsList extends StatefulWidget {
   FriendsList({super.key, required this.myuser});
@@ -49,14 +47,7 @@ class _FriendsListState extends State<FriendsList> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    getFrineds();
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -137,9 +128,5 @@ class _FriendsListState extends State<FriendsList> {
         ],
       ),
     );
-  }
-
-  void getFrineds() async {
-    //docIds = await RequestService().getFriends();
   }
 }

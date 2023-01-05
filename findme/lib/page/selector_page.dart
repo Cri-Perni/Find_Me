@@ -1,11 +1,17 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:findme/color/color.dart';
+import 'package:findme/notused/home_page.dart';
+import 'package:findme/page/drawer.dart';
 import 'package:findme/page/friends_map.dart';
-import 'package:findme/page/friends.dart';
+import 'package:findme/page/Friend/friends.dart';
+import 'package:findme/page/home2.dart';
+
 import 'package:findme/service/request_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import '../notused/friendsrequest.dart';
 import '../service/user.dart';
 import 'home.dart';
 
@@ -47,21 +53,22 @@ class _SelectorPageState extends State<SelectorPage> {
 
   @override
   Widget build(BuildContext context) {
+    
     getFrineds();
-    // ignore: avoid_print
     myuser.friends = docFriendsID;
-    print(myuser.friends);
 
     return Scaffold(
-      body: Center(
-          child: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          Home(myuser: myuser,),
-          FriendsMap(myuser: myuser),
-          Friends(myuser: myuser)
-        ],
-      )),
+      body:Center(
+              child: IndexedStack(
+            index: _selectedIndex,
+            children: [ 
+              //Home( myuser: myuser,),
+              Home2(myuser: myuser),
+              FriendsMap(myuser: myuser),
+              Friends(myuser: myuser),
+            ],
+          )),
+
       // ignore: prefer_const_constructors
       bottomNavigationBar: GNav(
           backgroundColor: Colors.white,

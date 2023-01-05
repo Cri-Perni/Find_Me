@@ -1,9 +1,6 @@
 
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:findme/color/color.dart';
-import 'package:findme/service/request_service.dart';
 import 'package:findme/service/user.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -28,7 +25,7 @@ class _FriendsMapState extends State<FriendsMap> {
   List<String> docFriendsID = [];
   
 
-  late GoogleMapController mapController;
+   late GoogleMapController mapController;
 
   @override
   void initState() {

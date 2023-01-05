@@ -44,13 +44,15 @@ dependencies:
   custom_navigation_bar: ^0.8.2
   firebase_auth: ^4.0.2
   page_transition: ^2.0.9
-  animated_drawer: ^0.0.4
   geolocator: ^9.0.2
   firebase_database: ^10.0.3
   quickalert: ^1.0.0
   badges: ^2.0.3
   google_nav_bar: ^5.0.6
   shimmer: ^2.0.0
+  flutter_svg: ^1.1.6
+  is_first_run: ^1.0.0
+  smooth_page_indicator: ^1.0.0+2
 
 
 dev_dependencies:
@@ -92,6 +94,10 @@ flutter:
     - assets/Search.png
     - assets/Friend.png
     - assets/Recived.png
+    - assets/menu.svg
+    - assets/introPage1.png
+    - assets/introPage2.png
+    - assets/introPage3.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

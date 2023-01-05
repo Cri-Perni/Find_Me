@@ -2,23 +2,17 @@
 
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:findme/page/drawer.dart';
 import 'package:findme/page/friends_map.dart';
 import 'package:findme/service/user.dart';
-import 'package:findme/service/request_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
-import 'package:location/location.dart';
-import 'package:page_transition/page_transition.dart';
-//import 'package:permission_handler/permission_handler.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:findme/color/color.dart';
 
-import '../service/user.dart';
-
 class Home extends StatefulWidget {
-  Home({super.key,required this.myuser});
+  Home({super.key, required this.myuser});
 
   MyUser myuser;
 
@@ -26,40 +20,20 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
+class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
   //List<String> docFriendsID = [];
   bool isOn = false;
   late GoogleMapController mapController;
   final loc.Location location = loc.Location();
   StreamSubscription<loc.LocationData>? _locationSubscription;
-  
+
   @override
   void initState() {
     super.initState();
-    //_getFriends();
-
-    //_animateToUser();
   }
 
   @override
   bool get wantKeepAlive => true;
-
-  /*void _getFriends() async {
-    FirebaseFirestore firepath = FirebaseFirestore.instance;
-    firepath
-        .collection('friends')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('myfriends')
-        .get()
-        .then((friendsID) => friendsID.docs.forEach(
-              (friendID) {
-                docFriendsID.add(friendID.reference.id);
-                print(friendID.reference.id);
-              },
-            ));
-    // ignore: avoid_print
-    print(docFriendsID.length);
-  }*/
 
   Future<void> _listenLocation() async {
     _locationSubscription = location.onLocationChanged.handleError((onError) {
@@ -95,7 +69,7 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
     });
   }
 
- Future _requestPermission() async {
+  Future _requestPermission() async {
     try {
       if (location.hasPermission() == PermissionStatus.granted) {
         location.changeSettings(
@@ -108,41 +82,30 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
     }
   }
 
-  /*_onMapCreated(GoogleMapController controller) {
-    setState(() {
-      mapController = controller;
-    });
-  }*/
-
-  void logOut() async{
-    FirebaseAuth.instance.signOut();
-  }
-
-  /*void _animateToUser() async {
-    LocationData pos = await location.getLocation();
-    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: LatLng(pos.latitude!, pos.longitude!), zoom: 15)));
-  }*/
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
     var size = MediaQuery.of(context).size;
     _requestPermission();
-    //_animateToUser();
+
+    GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
+      key: scaffoldKey,
+      drawer: SideDrawer(
+        myuser: widget.myuser,
+      ),
       backgroundColor: AppColors.scaffold.background,
       body: Stack(
         children: [
           Container(
-            height: size.height * .32,
+            height: size.height * .30,
             decoration: BoxDecoration(
                 color: AppColors.container.background,
                 borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20)),
-                // ignore: prefer_const_literals_to_create_immutables, prefer_const_constructors
+                // ignore: prefer_const_literals_to_create_immutables
                 boxShadow: [
                   BoxShadow(
                       color: Colors.grey,
@@ -150,11 +113,34 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
                       offset: Offset(0.0, 1.0))
                 ]),
           ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      alignment: Alignment.topLeft,
+                      child: IconButton(
+                          onPressed: () {
+                            scaffoldKey.currentState!.openDrawer();
+                          },
+                          icon: Icon(
+                            Icons.menu,
+                            color: Colors.white,
+                          )),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SingleChildScrollView(
-                child: Column(
+                  child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(
@@ -187,9 +173,7 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                  widget.myuser.username
-                                      .toString(),
+                              Text(widget.myuser.username.toString(),
                                   style: TextStyle(fontSize: 24))
                             ],
                           ),
@@ -236,7 +220,7 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
                             ),
                             Switch(
                                 value: isOn,
-                                activeColor:AppColors.container.background,
+                                activeColor: AppColors.container.background,
                                 onChanged: (bool value) {
                                   if (value) {
                                     _listenLocation();
@@ -270,7 +254,6 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
                               SizedBox(
                                 height: size.height * 0.015,
                               ),
-                              
                               FutureBuilder(
                                   future: FirebaseFirestore.instance
                                       .collection('friends')
@@ -288,11 +271,11 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
                                       );
                                     }
                                     return SizedBox(
-                                      height: 20 ,
-                                      width: 20,
-                                      child:CircularProgressIndicator(
-                                      color: AppColors.container.background,
-                                    ));
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          color: AppColors.container.background,
+                                        ));
                                   }))
                             ],
                           ),
@@ -305,7 +288,6 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
                   ),
                   //TextButton(onPressed:_LogOut , child: Text('Logout')),
                   Card(
-                    
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
                     elevation: 4,
@@ -316,14 +298,16 @@ class _HomeState extends State<Home>  with AutomaticKeepAliveClientMixin<Home>{
                       child: Center(
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                            child: FriendsMap(myuser: widget.myuser,)),
+                            child: FriendsMap(
+                              myuser: widget.myuser,
+                            )),
                       ),
                     ),
                   ),
                 ],
               )
-           )
-          ],
+              )
+            ],
           )
         ],
       ),

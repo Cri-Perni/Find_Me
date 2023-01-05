@@ -3,6 +3,7 @@ import 'package:findme/color/color.dart';
 import 'package:findme/service/user.dart';
 import 'package:findme/service/get_user_name.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -105,7 +106,7 @@ class _FriendRequestReceivedState2 extends State<FriendRequestReceived2> {
         .delete();
   }
 
-  dialog(Widget namemail, int index) async {
+  dialog(Widget namemail, String frinedId) async {
     showDialog(
         context: context,
         builder: ((context) {
@@ -115,11 +116,11 @@ class _FriendRequestReceivedState2 extends State<FriendRequestReceived2> {
             actions: [
               ElevatedButton(
                   onPressed: () {
-                    aceptRequest(docIds[index]);
+                    aceptRequest(frinedId);
                     setState(() {
-                      widget.myuser.friends!.add(docIds[index]);
+                      widget.myuser.friends!.add(frinedId);
                       //docIds.removeAt(index);
-                      docIds.remove(docIds[index]);
+                      docIds.remove(frinedId);
                     });
                     Navigator.pop(context);
                     QuickAlert.show(
@@ -133,9 +134,9 @@ class _FriendRequestReceivedState2 extends State<FriendRequestReceived2> {
                       backgroundColor: AppColors.container.background)),
               ElevatedButton(
                 onPressed: () {
-                  cancelRequest(docIds[index]);
+                  cancelRequest(frinedId);
                   setState(() {
-                    docIds.removeAt(index);
+                    docIds.remove(frinedId);
                   });
                   Navigator.pop(context);
                   QuickAlert.show(
@@ -179,16 +180,23 @@ class _FriendRequestReceivedState2 extends State<FriendRequestReceived2> {
       body: Column(
         children: [
           Expanded(
-              child: FutureBuilder(
-            future:getDocRequestsIds(),
-            builder: ((context, snapshot) {
-              if (docIds.isNotEmpty) {
+              child: StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('friendsrequests')
+                .doc(widget.myuser.id)
+                .collection('receivedrequests')
+                .snapshots(),
+            builder: ((context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.data!.size != 0) {
+                // ignore: avoid_print
+                print(snapshot.data?.docs);
                 return ListView.builder(
-                  itemCount: docIds.length,
+                  itemCount: snapshot.data?.docs.length,
                   itemBuilder: ((context, index) {
                     // ignore: prefer_const_constructors
                     return Card(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
                       color: Colors.white,
                       // ignore: prefer_const_constructors
                       child: Padding(
@@ -199,7 +207,7 @@ class _FriendRequestReceivedState2 extends State<FriendRequestReceived2> {
                             backgroundColor: AppColors.container.background,
                             radius: 25,
                           ),
-                          title: GetUserName(documentId: docIds[index].trim()),
+                          title: GetUserName(documentId: snapshot.data!.docs[index]['senter']),
                           tileColor: Colors.white,
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -213,9 +221,7 @@ class _FriendRequestReceivedState2 extends State<FriendRequestReceived2> {
                             ],
                           ),
                           onTap: () {
-                            dialog(
-                                GetUserName(documentId: docIds[index].trim()),
-                                index);
+                            dialog(GetUserName(documentId: snapshot.data!.docs[index]['senter']),snapshot.data!.docs[index]['senter']);
                           },
                         ),
                       ),

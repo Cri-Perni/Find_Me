@@ -1,17 +1,15 @@
 import 'package:badges/badges.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:findme/color/color.dart';
-import 'package:findme/page/friends_list.dart';
-import 'package:findme/page/pending_request.dart';
+import 'package:findme/page/Friend/f_request.dart';
+import 'package:findme/page/Friend/friends_list.dart';
+import 'package:findme/page/Friend/pending_request.dart';
 import 'package:findme/service/request_service.dart';
 import 'package:findme/service/user.dart';
-import 'package:findme/page/f_request.dart';
-import 'package:findme/page/optionrequest.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/quickalert.dart';
-import '../service/get_user_name.dart';
+
 
 class Friends extends StatefulWidget {
   Friends({super.key, required this.myuser});
@@ -95,24 +93,6 @@ class _FriendsState extends State<Friends> {
             }));
   }
 
-  void removeFriend(String friendsId) async {
-    _firePath
-        .collection('friends')
-        .doc(widget.myuser.id)
-        .collection('myfriends')
-        .doc(friendsId)
-        .delete();
-    _firePath
-        .collection('friends')
-        .doc(friendsId)
-        .collection('myfriends')
-        .doc(widget.myuser.id)
-        .delete();
-    setState(() {
-      widget.myuser.friends!.remove(friendsId);
-    });
-  }
-
   dialog(Widget namemail, friendsId) async {
     showDialog(
         context: context,
@@ -123,7 +103,10 @@ class _FriendsState extends State<Friends> {
             actions: [
               ElevatedButton(
                   onPressed: () {
-                    removeFriend(friendsId);
+                    RequestService().removeFriend(friendsId, widget.myuser.id!);
+                    setState(() {
+                      widget.myuser.friends!.remove(friendsId);
+                    });
                     Navigator.pop(context);
                     QuickAlert.show(
                         context: context,
@@ -155,12 +138,11 @@ class _FriendsState extends State<Friends> {
   }
 
   Widget buttonDialog(usermap) {
-    getDocIdRequestSent();
     if (RequestService()
         .isJustfrineds(widget.myuser.friends!, usermap['uid'])) {
       return ElevatedButton(
           onPressed: () {
-            removeFriend(usermap['uid']);
+            RequestService().removeFriend(usermap['uid'], widget.myuser.id!);
             Navigator.pop(context);
             QuickAlert.show(
                 context: context,
@@ -168,6 +150,7 @@ class _FriendsState extends State<Friends> {
                 type: QuickAlertType.success,
                 text: 'Friend Removed');
             setState(() {
+              widget.myuser.friends!.remove(usermap['uid']);
               userMap = {};
             });
           },
@@ -186,10 +169,8 @@ class _FriendsState extends State<Friends> {
                 type: QuickAlertType.success,
                 text: 'Request Deleted');
             setState(() {
-              docRequestsSentId = [];
               userMap = {};
             });
-            getDocIdRequestSent();
           },
           style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.container.background),
@@ -208,10 +189,8 @@ class _FriendsState extends State<Friends> {
               type: QuickAlertType.success,
               text: 'Request sent');
           setState(() {
-            docRequestsSentId = [];
             userMap = {};
           });
-          getDocIdRequestSent();
         },
         style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.container.background),
@@ -306,7 +285,7 @@ class _FriendsState extends State<Friends> {
                     .collection('receivedrequests')
                     .snapshots(),
                 builder: ((context, snapshot) {
-                  if (snapshot.data!.docs.isNotEmpty) {
+                  if (snapshot.data!.size != 0 ) {
                     return Badge(
                       position: BadgePosition.topEnd(top: 12, end: 12),
                       badgeColor: AppColors.container.notify,
@@ -352,6 +331,7 @@ class _FriendsState extends State<Friends> {
               height: size.height / 14,
               width: size.width,
               alignment: Alignment.center,
+              // ignore: sized_box_for_whitespace
               child: Container(
                 height: size.height / 14,
                 width: size.width / 1.15,
@@ -369,6 +349,7 @@ class _FriendsState extends State<Friends> {
                 onPressed: () {
                   setState(() {
                     docRequestsSentId = [];
+                    
                   });
                   onSearch();
                   getDocIdRequestSent();
@@ -425,7 +406,6 @@ class _FriendsState extends State<Friends> {
                                   ],
                                 ),
                                 onTap: () {
-                                  docRequestsSentId;
                                   dialogRequest(userMap);
                                 },
                               ),

@@ -1,8 +1,5 @@
 import 'dart:async';
-import 'package:findme/page/f_request.dart';
-import 'package:findme/notused/fp.dart';
-import 'package:findme/page/friends.dart';
-import 'package:findme/notused/friendsrequest.dart';
+
 import 'package:findme/page/welcome.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:page_transition/page_transition.dart';
@@ -10,7 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../map.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:location/location.dart' as loc;
 
 class MyHomePage extends StatefulWidget {

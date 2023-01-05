@@ -2,6 +2,8 @@
 
 import 'package:findme/color/color.dart';
 import 'package:findme/page/selector_page.dart';
+import 'package:findme/page/tree.dart';
+import 'package:findme/page/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:findme/service/auth.dart';
@@ -28,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _controllerEmail.text, 
         password: _controllerPassword.text);
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(context, PageTransition(child: SelectorPage(), type: PageTransitionType.rightToLeft));
+        Navigator.pushReplacement(context, PageTransition(child: Tree(), type: PageTransitionType.rightToLeft));
     } on FirebaseAuthException catch(e){
       setState(() {
         errorMessage = e.message;
@@ -105,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacement(context, PageTransition(child: Tree(), type: PageTransitionType.leftToRight));
           },
           icon: Icon(Icons.arrow_back_ios),
           iconSize: 20,
@@ -114,6 +116,7 @@ class _LoginPageState extends State<LoginPage> {
       ), 
       // ignore: sized_box_for_whitespace
       body:SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
       child:Container(
         height: size.height,
         width: size.width,

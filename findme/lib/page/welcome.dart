@@ -1,6 +1,6 @@
 import 'package:findme/color/color.dart';
-import 'package:findme/page/login.dart';
-import 'package:findme/page/register.dart';
+import 'package:findme/page/Auth/login.dart';
+import 'package:findme/page/Auth/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -69,7 +69,7 @@ class WelcomePage extends StatelessWidget {
                     height: size.height*0.072,
                     onPressed: () {
                       //Navigator.push(context, MaterialPageRoute(builder: ((context) => LoginPage())));
-                      Navigator.push(context, PageTransition(child: LoginPage(), type: PageTransitionType.rightToLeft));
+                      Navigator.pushReplacement(context, PageTransition(child: LoginPage(), type: PageTransitionType.rightToLeft));
                     },
                     shape: RoundedRectangleBorder(
                       side: const BorderSide(

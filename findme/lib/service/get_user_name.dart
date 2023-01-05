@@ -20,7 +20,7 @@ class GetUserName extends StatelessWidget {
       builder: ((context, snapshot) {
         if(snapshot.connectionState == ConnectionState.done){
           Map<String,dynamic> data = snapshot.data!.data() as Map<String,dynamic>;
-          return Text(data['username'],style: TextStyle(fontSize: 16),);
+          return Text(data['username']+"\n"+data['name'],style: TextStyle(fontSize: 16),);
         }
         return 
           Column(
