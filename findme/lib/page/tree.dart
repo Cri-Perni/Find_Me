@@ -1,3 +1,4 @@
+import 'package:findme/page/Auth/verify_email_page.dart';
 import 'package:findme/page/intro_screen.dart';
 import 'package:findme/page/selector_page.dart';
 import 'package:findme/page/splash.dart';
@@ -40,7 +41,7 @@ class _TreeState extends State<Tree> {
                         return const IntroScreen();
                       } else {
                         if (authSnapshot.hasData) {
-                          return const SelectorPage();
+                          return const VerifyEmailPage();
                         } else {
                           return WelcomePage();
                         }

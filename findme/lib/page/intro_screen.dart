@@ -210,7 +210,7 @@ class _IntroScreenState extends State<IntroScreen> {
                     Navigator.pushReplacement(
                         context,
                         PageTransition(
-                            child: WelcomePage(),
+                            child: const Tree(),
                             type: PageTransitionType.rightToLeft));
                   },
                   child: const Text(

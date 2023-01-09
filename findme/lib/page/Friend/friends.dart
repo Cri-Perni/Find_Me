@@ -285,7 +285,7 @@ class _FriendsState extends State<Friends> {
                     .collection('receivedrequests')
                     .snapshots(),
                 builder: ((context, snapshot) {
-                  if (snapshot.data!.size != 0 ) {
+                  if (snapshot.data?.size != 0 ) {
                     return Badge(
                       position: BadgePosition.topEnd(top: 12, end: 12),
                       badgeColor: AppColors.container.notify,

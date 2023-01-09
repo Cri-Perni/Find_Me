@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:findme/service/get_user_name.dart';
 import 'package:findme/service/request_service.dart';
 import 'package:findme/service/user.dart';
@@ -69,62 +70,70 @@ class _FriendsListState extends State<FriendsList> {
       body: Column(
         children: [
           Expanded(
-              child: widget.myuser.friends!.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: widget.myuser.friends!.length,
-                      itemBuilder: ((context, index) {
-                        // ignore: prefer_const_constructors
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          color: Colors.white,
-                          // ignore: prefer_const_constructors
-                          child: Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage:
-                                    AssetImage("assets/utente.jfif"),
-                                backgroundColor: AppColors.container.background,
-                                radius: 25,
-                              ),
-                              title: GetUserName(
-                                  documentId:
-                                      widget.myuser.friends![index].trim()),
-                              tileColor: Colors.white,
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                // ignore: prefer_const_literals_to_create_immutables
-                                children: [
-                                  const Text(
-                                    'Click For Manage',
-                                    style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 114, 114, 114)),
-                                  )
-                                ],
-                              ),
-                              onTap: () {
-                                dialog(
-                                    GetUserName(
-                                        documentId: widget
-                                            .myuser.friends![index]
-                                            .trim()),
-                                    widget.myuser.friends![index]);
-                              },
-                            ),
+              child: StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('friends')
+                .doc(widget.myuser.id)
+                .collection('myfriends')
+                .snapshots(),
+            builder: ((context, snapshot) {
+              if (snapshot.data?.docs.isNotEmpty == true ){
+                // ignore: avoid_print
+                print(snapshot.data?.docs);
+                return ListView.builder(
+                  itemCount: snapshot.data?.docs.length,
+                  itemBuilder: ((context, index) {
+                    // ignore: prefer_const_constructors
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      color: Colors.white,
+                      // ignore: prefer_const_constructors
+                      child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: AssetImage("assets/utente.jfif"),
+                            backgroundColor: AppColors.container.background,
+                            radius: 25,
                           ),
-                        );
-                      }),
-                    )
-                  : Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      Text(
-                        'There are no Friends',
-                        style: TextStyle(
-                            color: AppColors.container.background,
-                            fontSize: 20),
-                      )
-                    ])),
+                          title: GetUserName(
+                              documentId: snapshot.data!.docs[index]['friend']),
+                          tileColor: Colors.white,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            // ignore: prefer_const_literals_to_create_immutables
+                            children: [
+                              const Text(
+                                'Click For Manage',
+                                style: TextStyle(
+                                    color: Color.fromARGB(255, 114, 114, 114)),
+                              )
+                            ],
+                          ),
+                          onTap: () {
+                            dialog(
+                                GetUserName(
+                                    documentId: snapshot.data!.docs[index]
+                                        ['friend']),
+                                snapshot.data!.docs[index]['friend']);
+                          },
+                        ),
+                      ),
+                    );
+                  }),
+                );
+              } else {
+                return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text(
+                    'There are no Friends',
+                    style: TextStyle(
+                        color: AppColors.container.background, fontSize: 20),
+                  )
+                ]);
+              }
+            }),
+          )),
         ],
       ),
     );

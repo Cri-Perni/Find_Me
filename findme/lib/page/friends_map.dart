@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:findme/color/color.dart';
 import 'package:findme/service/user.dart';

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:findme/page/Friend/friends.dart';
 import 'package:findme/page/drawer.dart';
 import 'package:findme/page/friends_map.dart';
+import 'package:findme/service/auth.dart';
 import 'package:findme/service/user.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -79,10 +80,6 @@ class _Home2State extends State<Home2> {
     GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
-        key: scaffoldKey,
-        drawer: SideDrawer(
-          myuser: widget.myuser,
-        ),
         backgroundColor: AppColors.scaffold.background,
         body: Stack(children: [
           Container(
@@ -111,12 +108,13 @@ class _Home2State extends State<Home2> {
                       alignment: Alignment.topLeft,
                       child: IconButton(
                           onPressed: () {
-                            scaffoldKey.currentState!.openDrawer();
+                            _stopListening();
+                            Auth().signOut();
                             // ignore: avoid_print
-                            print('diooooooooo');
+                            print('LogOut.........');
                           },
                           icon: const Icon(
-                            Icons.menu,
+                            Icons.logout,
                             color: Colors.white,
                           )),
                     ),
