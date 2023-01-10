@@ -1,6 +1,6 @@
 import 'package:findme/page/intro_screen.dart';
 import 'package:findme/service/auth.dart';
-import 'package:findme/page/home.dart';
+import 'package:findme/notused/home.dart';
 import 'package:findme/page/selector_page.dart';
 import 'package:findme/page/welcome.dart';
 import 'package:flutter/material.dart';

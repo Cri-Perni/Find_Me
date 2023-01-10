@@ -99,25 +99,23 @@ class _Home2State extends State<Home2> {
           ),
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(2.0),
+              padding: EdgeInsets.all(size.width*.03),
               child: Column(
                 children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Container(
+                    Align(
                       alignment: Alignment.topLeft,
-                      child: IconButton(
-                          onPressed: () {
-                            _stopListening();
-                            Auth().signOut();
-                            // ignore: avoid_print
-                            print('LogOut.........');
-                          },
-                          icon: const Icon(
-                            Icons.logout,
-                            color: Colors.white,
-                          )),
-                    ),
+                      child: Container(
+                        alignment: Alignment.topLeft,
+                        child: GestureDetector(
+                    onTap: () {
+                      _stopListening();
+                              Auth().signOut();
+                              // ignore: avoid_print
+                              print('LogOut.........');
+                    },child:
+                     const Icon(Icons.logout,color: Colors.white,),
+                     )
+                      ),
                   )
                 ],
               ),

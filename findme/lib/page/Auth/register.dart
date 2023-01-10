@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:findme/page/Auth/verify_email_page.dart';
-import 'package:findme/page/home.dart';
+import 'package:findme/notused/home.dart';
 import 'package:findme/page/Auth/login.dart';
 import 'package:findme/page/selector_page.dart';
 import 'package:findme/page/tree.dart';

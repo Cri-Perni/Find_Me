@@ -1,19 +1,12 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:findme/color/color.dart';
-import 'package:findme/notused/home_page.dart';
-import 'package:findme/page/drawer.dart';
 import 'package:findme/page/friends_map.dart';
 import 'package:findme/page/Friend/friends.dart';
 import 'package:findme/page/home2.dart';
-
 import 'package:findme/service/request_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import '../notused/friendsrequest.dart';
 import '../service/user.dart';
-import 'home.dart';
 
 class SelectorPage extends StatefulWidget {
   const SelectorPage({super.key});
@@ -22,7 +15,8 @@ class SelectorPage extends StatefulWidget {
   State<SelectorPage> createState() => _SelectorPageState();
 }
 
-class _SelectorPageState extends State<SelectorPage> {
+class _SelectorPageState extends State<SelectorPage>{
+  
   List<String> docFriendsID = [];
 
   int _selectedIndex = 0;
@@ -31,6 +25,7 @@ class _SelectorPageState extends State<SelectorPage> {
   @override
   void initState() {
     super.initState();
+     
 
     myuser = MyUser(
         FirebaseAuth.instance.currentUser!.uid,
@@ -53,21 +48,20 @@ class _SelectorPageState extends State<SelectorPage> {
 
   @override
   Widget build(BuildContext context) {
-    
     getFrineds();
     myuser.friends = docFriendsID;
 
     return Scaffold(
-      body:Center(
-              child: IndexedStack(
-            index: _selectedIndex,
-            children: [ 
-              //Home( myuser: myuser,),
-              Home2(myuser: myuser),
-              FriendsMap(myuser: myuser),
-              Friends(myuser: myuser),
-            ],
-          )),
+      body: Center(
+          child: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          //Home( myuser: myuser,),
+          Home2(myuser: myuser),
+          FriendsMap(myuser: myuser),
+          Friends(myuser: myuser),
+        ],
+      )),
 
       // ignore: prefer_const_constructors
       bottomNavigationBar: GNav(
