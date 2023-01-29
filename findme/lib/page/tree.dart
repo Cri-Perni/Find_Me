@@ -1,11 +1,9 @@
 import 'package:findme/page/Auth/verify_email_page.dart';
 import 'package:findme/page/intro_screen.dart';
-import 'package:findme/page/selector_page.dart';
 import 'package:findme/page/splash.dart';
 import 'package:findme/page/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../service/auth.dart';
 import 'error_screen.dart';
 

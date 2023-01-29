@@ -1,19 +1,12 @@
-import 'dart:math';
-import 'package:findme/page/Auth/verify_email_page.dart';
-import 'package:findme/notused/home.dart';
 import 'package:findme/page/Auth/login.dart';
-import 'package:findme/page/selector_page.dart';
 import 'package:findme/page/tree.dart';
-import 'package:findme/page/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:findme/service/auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:quickalert/quickalert.dart';
-
 import '../../color/color.dart';
 
 class RegisterPage extends StatefulWidget {

@@ -2,13 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:findme/service/request_service.dart';
 import 'package:findme/service/user.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
-
 import '../../color/color.dart';
-import '../../notused/get_user_image.dart';
 import '../../service/get_user_name.dart';
 
 class Pending extends StatefulWidget {

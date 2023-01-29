@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:findme/page/Friend/friends.dart';
-import 'package:findme/page/drawer.dart';
 import 'package:findme/page/friends_map.dart';
 import 'package:findme/service/auth.dart';
 import 'package:findme/service/user.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:findme/color/color.dart';

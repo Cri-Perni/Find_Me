@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:findme/color/color.dart';
 import 'package:findme/page/Friend/f_request.dart';
@@ -286,9 +286,11 @@ class _FriendsState extends State<Friends> {
                     .snapshots(),
                 builder: ((context, snapshot) {
                   if (snapshot.data?.size != 0 ) {
-                    return Badge(
-                      position: BadgePosition.topEnd(top: 12, end: 12),
-                      badgeColor: AppColors.container.notify,
+                    return badges.Badge(
+                      position: badges.BadgePosition.topEnd(top: 12, end: 12),
+                      badgeStyle: badges.BadgeStyle(
+                        badgeColor: AppColors.container.notify,
+                      ),
                       child: IconButton(
                         onPressed: () {
                           Navigator.push(

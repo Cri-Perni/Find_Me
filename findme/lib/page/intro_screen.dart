@@ -1,5 +1,4 @@
 import 'package:findme/color/color.dart';
-import 'package:findme/notused/ellisse.dart';
 import 'package:findme/page/selector_page.dart';
 import 'package:findme/page/tree.dart';
 import 'package:findme/page/welcome.dart';

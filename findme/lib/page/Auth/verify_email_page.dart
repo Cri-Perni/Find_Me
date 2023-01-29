@@ -1,14 +1,9 @@
 import 'dart:async';
-
 import 'package:findme/color/color.dart';
-import 'package:findme/page/Auth/login.dart';
-import 'package:findme/page/home2.dart';
 import 'package:findme/page/selector_page.dart';
 import 'package:findme/service/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({super.key});
@@ -95,7 +90,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                     },
                     icon: const Icon(Icons.email),
                     label: const Text(
-                      'Resent Email',
+                      'Resend Email',
                       style: TextStyle(fontSize: 24),
                     )),
                 const SizedBox(
