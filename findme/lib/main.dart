@@ -22,7 +22,9 @@ class MyApp extends StatelessWidget {
       title: 'FindMe',
       theme: ThemeData(
           primaryColor: AppColors.container.background,
-          primarySwatch: Colors.blueGrey),
+          primarySwatch: Colors.blueGrey
+          ),
+          
       home: const Tree(),
     );
   }

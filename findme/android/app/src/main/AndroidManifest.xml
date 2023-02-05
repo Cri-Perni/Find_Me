@@ -16,7 +16,7 @@
    <application
         android:label="findme"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
 
         <!--added api key-->
         <meta-data android:name="com.google.android.geo.API_KEY"
