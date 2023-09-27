@@ -31,63 +31,63 @@ class RequestService {
     return FirebaseFirestore.instance.collection('friends').doc(uid);
   }
 
-  Future sendRequest(String reciverUid, String currentUId, List docIds) async {
+  Future sendRequest(String receiverUid, String currentUId, List docIds) async {
     FirebaseFirestore firepath = FirebaseFirestore.instance;
     //insert sent request in myuserid
     await firepath
         .collection('friendsrequests')
         .doc(currentUId)
         .collection('sentrequests')
-        .doc(reciverUid)
-        .set({'reciver': reciverUid}, SetOptions(merge: true));
+        .doc(receiverUid)
+        .set({'reciver': receiverUid}, SetOptions(merge: true));
     //insert resived request in resiveruserid
     await firepath
         .collection('friendsrequests')
-        .doc(reciverUid)
+        .doc(receiverUid)
         .collection('receivedrequests')
         .doc(currentUId)
         .set({'senter': currentUId}, SetOptions(merge: true));
-    docIds.add(reciverUid);
+    docIds.add(receiverUid);
   }
 
-  Future deleteRequest(String reciverUid, String currentUId, List docIds) async {
+  Future deleteRequest(String receiverUid, String currentUId, List docIds) async {
     FirebaseFirestore firepath = FirebaseFirestore.instance;
     //delete request
     await firepath
         .collection('friendsrequests')
         .doc(currentUId)
         .collection('sentrequests')
-        .doc(reciverUid)
+        .doc(receiverUid)
         .delete();
     await firepath
         .collection('friendsrequests')
-        .doc(reciverUid)
+        .doc(receiverUid)
         .collection('receivedrequests')
         .doc(currentUId)
         .delete();
-    docIds.remove(reciverUid);
+    docIds.remove(receiverUid);
   }
 
-  bool isJustSent(List docIds, String reciverUid) {
+  bool isJustSent(List docIds, String receiverUid) {
     bool flag = false;
     // ignore: avoid_function_literals_in_foreach_calls
     docIds.forEach((element) {
       // ignore: avoid_print
-      print(element + ' ' + reciverUid);
-      if (element == reciverUid) {
+      print(element + ' ' + receiverUid);
+      if (element == receiverUid) {
         flag = true;
       }
     });
     return flag;
   }
 
-  bool isJustfrineds(List docIds, String reciverUid) {
+  bool isJustfrineds(List docIds, String receiverUid) {
     bool flag = false;
     // ignore: avoid_function_literals_in_foreach_calls
     docIds.forEach((element) {
       // ignore: avoid_print
-      print(element + ' ' + reciverUid);
-      if (element == reciverUid) {
+      print(element + ' ' + receiverUid);
+      if (element == receiverUid) {
         flag = true;
       }
     });

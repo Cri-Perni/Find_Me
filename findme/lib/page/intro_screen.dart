@@ -135,19 +135,19 @@ class _IntroScreenState extends State<IntroScreen> {
           },
           children: [
             buidPage(
-                color: Color(0xff7ab4dc),
+                color: const Color(0xff7ab4dc),
                 urlimage: 'assets/introPage1.png',
                 title: title1,
                 subtitle: subtitle1,
                 size: size),
             buidPage(
-                color: Color(0xff7ab4dc),
+                color: const Color(0xff7ab4dc),
                 urlimage: 'assets/introPage2.png',
                 title: title2,
                 subtitle: subtitle2,
                 size: size),
             buidPage(
-                color: Color(0xff7ab4dc),
+                color: const Color(0xff7ab4dc),
                 urlimage: 'assets/introPage3.png',
                 title: title3,
                 subtitle: subtitle3,

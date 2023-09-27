@@ -20,8 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String? errorMessage = '';
   String nome = '';
 
-  final TextEditingController _controllerCheckPassword =
-      TextEditingController();
+  final TextEditingController _controllerCheckPassword = TextEditingController();
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerPassword = TextEditingController();
   final TextEditingController _controllerUserName = TextEditingController();
